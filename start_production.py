@@ -1,57 +1,22 @@
-#!/usr/bin/env python3
-"""
-Production startup script for Wellness Tracker Backend
-"""
 import os
-import subprocess
-import sys
-from app.config import settings
+import uvicorn
+import multiprocessing
 
-def run_migrations():
-    """Run database migrations"""
-    try:
-        print("🔄 Running database migrations...")
-        result = subprocess.run(["alembic", "upgrade", "head"], check=True, capture_output=True, text=True)
-        print("✅ Database migrations completed successfully")
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Migration failed: {e}")
-        print(f"Error output: {e.stderr}")
-        return False
-
-def start_server():
-    """Start the production server"""
-    print("🚀 Starting production server...")
-    
-    # Use gunicorn for production
-    cmd = [
-        "gunicorn",
-        "app.main:app",
-        "-w", "4",  # Number of workers
-        "-k", "uvicorn.workers.UvicornWorker",
-        "--bind", "0.0.0.0:8000",
-        "--timeout", "120",
-        "--keep-alive", "2",
-        "--max-requests", "1000",
-        "--max-requests-jitter", "100",
-        "--preload"
-    ]
-    
-    try:
-        subprocess.run(cmd, check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"❌ Server failed to start: {e}")
-        sys.exit(1)
+# Get environment variables
+PORT = int(os.getenv("PORT", 8000))
+WEB_CONCURRENCY = int(os.getenv("WEB_CONCURRENCY", multiprocessing.cpu_count() * 2))
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
 if __name__ == "__main__":
-    print("🏃‍♂️ Starting Wellness Tracker Backend (Production)")
-    print(f"📊 Database: {settings.database_url}")
-    print(f"🔧 Debug Mode: {settings.debug}")
-    print(f"🤖 OpenAI API: {'Configured' if settings.openai_api_key else 'Not configured'}")
-    
-    # Run migrations first
-    if not run_migrations():
-        print("⚠️  Continuing without successful migration...")
-    
-    # Start the server
-    start_server()
+    if DEBUG:
+        # For local development with auto-reloading
+        uvicorn.run(
+            "app.main:app",
+            host="0.0.0.0",
+            port=PORT,
+            reload=True,
+            log_level="info"
+        )
+    else:
+        # For production with Gunicorn
+        os.system(f"gunicorn app.main:app --workers {WEB_CONCURRENCY} --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:{PORT}")
