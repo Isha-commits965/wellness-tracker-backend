@@ -2,7 +2,7 @@ services:
   - type: web
     name: wellness-tracker-backend
     env: python
-    buildCommand: "pip install -r requirements.txt && alembic upgrade head"
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt && alembic upgrade head"
     startCommand: "python start_production.py"
     healthCheckPath: /health
     envVars:
@@ -16,6 +16,12 @@ services:
         sync: false # Set this manually in Render dashboard
       - key: DEBUG
         value: "False"
+      - key: ALGORITHM
+        value: "HS256"
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+      - key: APP_NAME
+        value: "Wellness Tracker API"
     autoDeploy: true
     # Scaling (optional)
     # numInstances: 1
