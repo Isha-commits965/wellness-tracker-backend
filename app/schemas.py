@@ -6,7 +6,6 @@ from datetime import date, datetime
 # User Schemas
 class UserBase(BaseModel):
     email: EmailStr
-    username: str
     full_name: Optional[str] = None
 
 
@@ -16,7 +15,6 @@ class UserCreate(UserBase):
 
 class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
-    username: Optional[str] = None
     full_name: Optional[str] = None
 
 
@@ -201,7 +199,7 @@ class Token(BaseModel):
 
 
 class TokenData(BaseModel):
-    username: Optional[str] = None
+    email: Optional[str] = None
 
 
 # AI Response Schema
