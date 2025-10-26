@@ -202,6 +202,11 @@ class TokenData(BaseModel):
     email: Optional[str] = None
 
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
 # AI Response Schema
 class AIJournalResponse(BaseModel):
     response: str
