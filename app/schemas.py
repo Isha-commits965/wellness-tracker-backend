@@ -114,13 +114,13 @@ class MoodEntry(MoodEntryBase):
 
 # Journal Entry Schemas
 class JournalEntryBase(BaseModel):
-    date: date
     content: str
     mood_before: Optional[int] = None
+    mood_after: Optional[int] = None
 
 
 class JournalEntryCreate(JournalEntryBase):
-    pass
+    date: Optional[date] = None
 
 
 class JournalEntryUpdate(BaseModel):

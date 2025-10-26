@@ -3,20 +3,25 @@ from typing import Optional, List
 from app.config import settings
 from app.schemas import AIJournalResponse
 
-# Initialize OpenAI client
-if settings.openai_api_key:
-    openai.api_key = settings.openai_api_key
-
 
 class AIJournalService:
     def __init__(self):
         self.client = None
         if settings.openai_api_key:
             try:
+                # Try the new OpenAI client initialization
                 self.client = openai.OpenAI(api_key=settings.openai_api_key)
+                print("✅ OpenAI client initialized successfully")
             except Exception as e:
                 print(f"Warning: Failed to initialize OpenAI client: {e}")
-                self.client = None
+                # Try alternative initialization
+                try:
+                    openai.api_key = settings.openai_api_key
+                    self.client = openai
+                    print("✅ OpenAI client initialized with legacy method")
+                except Exception as e2:
+                    print(f"Warning: Legacy OpenAI initialization also failed: {e2}")
+                    self.client = None
     
     async def generate_journal_response(
         self, 
@@ -72,17 +77,31 @@ Keep your response warm, empathetic, and conversational. Avoid being overly clin
 Your response should be 2-3 paragraphs long and end with a thoughtful question to encourage continued reflection."""
 
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
-                messages=[
-                    {"role": "system", "content": "You are a compassionate AI journal companion who provides empathetic and supportive responses."},
-                    {"role": "user", "content": prompt}
-                ],
-                max_tokens=500,
-                temperature=0.7
-            )
-            
-            ai_response = response.choices[0].message.content.strip()
+            # Check if it's the new OpenAI client or legacy
+            if hasattr(self.client, 'chat'):
+                # New OpenAI client
+                response = self.client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a compassionate AI journal companion who provides empathetic and supportive responses."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=500,
+                    temperature=0.7
+                )
+                ai_response = response.choices[0].message.content.strip()
+            else:
+                # Legacy OpenAI client
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": "You are a compassionate AI journal companion who provides empathetic and supportive responses."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    max_tokens=500,
+                    temperature=0.7
+                )
+                ai_response = response.choices[0].message.content.strip()
             
             # Generate suggestions based on the content
             suggestions = self._generate_suggestions(journal_content, mood_before)

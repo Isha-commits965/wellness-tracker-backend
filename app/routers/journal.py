@@ -21,10 +21,13 @@ async def create_journal_entry(
     db: Session = Depends(get_db)
 ):
     """Create a new journal entry with AI response"""
+    # Set date to today if not provided
+    entry_date = journal_entry.date or date.today()
+    
     # Check if entry already exists for this date
     existing_entry = db.query(JournalEntry).filter(
         JournalEntry.user_id == current_user.id,
-        JournalEntry.date == journal_entry.date
+        JournalEntry.date == entry_date
     ).first()
     
     if existing_entry:
@@ -50,7 +53,7 @@ async def create_journal_entry(
     # Create journal entry
     db_journal_entry = JournalEntry(
         user_id=current_user.id,
-        date=journal_entry.date,
+        date=entry_date,
         content=journal_entry.content,
         mood_before=journal_entry.mood_before,
         ai_response=ai_response.response,
