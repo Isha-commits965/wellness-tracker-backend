@@ -16,7 +16,12 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Configure this properly for production
+    allow_origins=[
+        "https://wellness-tracker-frontend.onrender.com",  # Production frontend
+        "http://localhost:5173",  # Local development (Vite)
+        "http://localhost:3000",  # Alternative local port
+        "http://localhost:8080",  # Alternative local port
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
