@@ -3,7 +3,7 @@ services:
     name: wellness-tracker-backend
     env: python
     pythonVersion: "3.11"
-    buildCommand: "pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt && alembic upgrade head"
+    buildCommand: "pip install pipenv && pipenv install --deploy --system && alembic upgrade head"
     startCommand: "python start_production.py"
     healthCheckPath: /health
     envVars:
