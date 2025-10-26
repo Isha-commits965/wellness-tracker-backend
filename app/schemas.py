@@ -24,7 +24,7 @@ class User(UserBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Habit Schemas
@@ -54,7 +54,7 @@ class Habit(HabitBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Habit Check-in Schemas
@@ -80,7 +80,7 @@ class HabitCheckIn(HabitCheckInBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Mood Entry Schemas
@@ -109,7 +109,7 @@ class MoodEntry(MoodEntryBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Journal Entry Schemas
@@ -136,7 +136,7 @@ class JournalEntry(JournalEntryBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Goal Schemas
@@ -164,7 +164,7 @@ class Goal(GoalBase):
     created_at: datetime
     
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 # Analytics Schemas
