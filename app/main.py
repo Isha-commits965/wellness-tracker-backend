@@ -17,7 +17,7 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=False,  # Must be False when allow_origins is ["*"]
+    allow_credentials=False,  # Must be False when allow_origins is ["*"]frinetdn for streak calculation
     allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],

@@ -242,16 +242,21 @@ async def get_habit_streaks(
             ))
             continue
         
-        # Calculate current streak
+        # Calculate current streak (consecutive days from today or yesterday)
         current_streak = 0
-        current_date = date.today()
+        today = date.today()
+        expected_date = today
+        
+        # Allow streak to continue if user completed yesterday
+        if check_ins[0].date == today - timedelta(days=1):
+            expected_date = today - timedelta(days=1)
         
         for check_in in check_ins:
-            if check_in.date == current_date or check_in.date == current_date - timedelta(days=current_streak):
+            if check_in.date == expected_date:
                 current_streak += 1
-                current_date = check_in.date - timedelta(days=1)
+                expected_date = expected_date - timedelta(days=1)
             else:
-                break
+                break  # Gap found, stop counting
         
         # Calculate longest streak
         longest_streak = 0
